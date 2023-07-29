@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<klayout-macro>
+ <description/>
+ <version/>
+ <category>pymacros</category>
+ <prolog/>
+ <epilog/>
+ <doc/>
+ <autorun>true</autorun>
+ <autorun-early>false</autorun-early>
+ <shortcut/>
+ <show-in-menu>false</show-in-menu>
+ <group-name/>
+ <menu-path/>
+ <interpreter>python</interpreter>
+ <dsl-interpreter-name/>
+ <text>import pya
+
+class CouplingPort(pya.PCellDeclarationHelper):
+    """
+    The PCell declaration for the CouplingPort
+    """
+
+    def __init__(self):
+
+        # Important: initialize the super class
+        super(CouplingPort, self).__init__()
+
+        # declare the parameters
+        self.param("layer", self.TypeLayer, "Layer", default=pya.LayerInfo(1, 0))
+        self.param("a", self.TypeDouble, "Dimension a", default=100)
+        self.param("b", self.TypeDouble, "Dimension b", default=100)
+        self.param("c", self.TypeDouble, "Dimension c", default=100)
+        self.param("d", self.TypeDouble, "Dimension d", default=100)
+        self.param("e", self.TypeDouble, "Dimension e", default=100)
+
+    def display_text_impl(self):
+        # Provide a descriptive text for the cell
+        return "CouplingPort(Layer=%s, a=%s, b=%s, c=%s, d=%s, e=%s)" % (str(self.layer), str(self.a), str(self.b), str(self.c), str(self.d), str(self.e))
+
+    def produce_impl(self):
+        # This is the main part of the implementation: create the layout
+
+        # Fetch the parameters
+        layer_info = self.layer
+        a = self.a
+        b = self.b
+        c = self.c
+        d = self.d
+        e = self.e
+
+        # Create the shape
+        points = [pya.Point(-a/2, 0), pya.Point(a/2, 0), pya.Point(a/2 + b, c), pya.Point(a/2 + b, c + d), pya.Point(-a/2 - b, c + d), pya.Point(-a/2 - b, c), pya.Point(-a/2, 0)]
+        shape = pya.Polygon(points)
+
+        # Get the layer index for the given layer info
+        layer_index = self.layout.layer(layer_info)
+
+        # Insert the shape into the layout
+        self.cell.shapes(layer_index).insert(shape)
+
+class MyLib(pya.Library):
+    """
+    The library where we will put the PCell into 
+    """
+
+    def __init__(self):
+  
+        # Set the description
+        self.description = "LFL Ports Library"
+    
+        # Create the PCell declarations
+        self.layout().register_pcell("CouplingPort", CouplingPort())
+        # That would be the place to put in more PCells ...
+    
+        # Register us with the name "MyLib".
+        # If a library with that name already existed, it will be replaced then.
+        self.register("Ports")
+
+# Instantiate and register the library
+MyLib()
+</text>
+</klayout-macro>

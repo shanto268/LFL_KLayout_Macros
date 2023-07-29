@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<klayout-macro>
+ <description/>
+ <version/>
+ <category>pymacros</category>
+ <prolog/>
+ <epilog/>
+ <doc/>
+ <autorun>false</autorun>
+ <autorun-early>false</autorun-early>
+ <shortcut/>
+ <show-in-menu>false</show-in-menu>
+ <group-name/>
+ <menu-path/>
+ <interpreter>python</interpreter>
+ <dsl-interpreter-name/>
+ <text>import pya
+
+# Get a reference to the application
+app = pya.Application.instance()
+
+# Get the main window
+mw = app.main_window()
+
+# Get the current view
+view = mw.current_view()
+
+# Check if a layout is open
+if view == None:
+    raise Exception("No layout is open")
+
+# Get the layout
+layout = view.active_cellview().layout()
+
+# Select the cell
+cell_name = "CPW_NBR07"
+cell = layout.cell(cell_name)
+if cell is None:
+    print(f"No cell found with the name {cell_name}")
+else:
+    # Select the layer with the polygon using layer number and datatype number
+    layer_number = 2
+    datatype_number = 0
+    layer_index = layout.find_layer(pya.LayerInfo.new(layer_number, datatype_number))
+    if layer_index is None:
+        print(f"No layer found with layer number {layer_number} and datatype number {datatype_number}")
+    else:
+        # Initialize a variable to store the total length
+        total_length = 0
+
+        # Iterate over all shapes in the cell and layer
+        for shape in cell.shapes(layer_index).each():
+
+            # Check if the shape is a polygon
+            if shape.is_polygon():
+
+                # Convert the shape to a polygon
+                polygon = shape.polygon
+
+                # Iterate over all edges in the polygon
+                for edge in polygon.each_edge():
+
+                    # Add the length of the edge to the total length
+                    total_length += edge.length()* layout.dbu  # convert to microns
+
+        print("Total length:", total_length, "microns")
+</text>
+</klayout-macro>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<klayout-macro>
+ <description/>
+ <version/>
+ <category>pymacros</category>
+ <prolog/>
+ <epilog/>
+ <doc/>
+ <autorun>false</autorun>
+ <autorun-early>false</autorun-early>
+ <shortcut/>
+ <show-in-menu>false</show-in-menu>
+ <group-name/>
+ <menu-path/>
+ <interpreter>python</interpreter>
+ <dsl-interpreter-name/>
+ <text>import pya
+
+# Get the main window
+main_window = pya.Application.instance().main_window()
+
+# Get the current view
+view = main_window.current_view()
+
+# Check if a view is present
+if view:
+    # Switch the view to center
+    view.zoom_fit()
+else:
+    print("No view present.")
+</text>
+</klayout-macro>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<klayout-macro>
+ <description/>
+ <version/>
+ <category>pymacros</category>
+ <prolog/>
+ <epilog/>
+ <doc/>
+ <autorun>true</autorun>
+ <autorun-early>false</autorun-early>
+ <shortcut/>
+ <show-in-menu>false</show-in-menu>
+ <group-name/>
+ <menu-path/>
+ <interpreter>python</interpreter>
+ <dsl-interpreter-name/>
+ <text>import pya
+
+class NBRCoupler(pya.PCellDeclarationHelper):
+  """
+  The PCell declaration for the NBRCoupler
+  """
+
+  def __init__(self):
+
+    # Important: initialize the super class
+    super(NBRCoupler, self).__init__()
+
+    # declare the parameters
+    self.param("l", self.TypeLayer, "Layer", default = pya.LayerInfo(1, 0))
+    self.param("w", self.TypeDouble, "Width", default = 10)
+    self.param("h", self.TypeDouble, "Height", default = 20)
+    self.param("h_gap", self.TypeDouble, "Horizontal Gap", default = 5)
+    self.param("y_sep", self.TypeDouble, "Vertical Separation", default = 5)
+
+  def display_text_impl(self):
+    # Provide a descriptive text for the cell
+    return "NBRCoupler(L=" + str(self.l) + ",W=" + ('%.3f' % self.w) + ",H=" + ('%.3f' % self.h) + ",H_gap=" + ('%.3f' % self.h_gap) + ",Y_sep=" + ('%.3f' % self.y_sep) + ")"
+  
+  def produce_impl(self):
+  
+    # This is the main part of the implementation: create the layout
+
+    # fetch the parameters
+    w_dbu = self.w / self.layout.dbu
+    h_dbu = self.h / self.layout.dbu
+    h_gap_dbu = self.h_gap / self.layout.dbu
+    y_sep_dbu = self.y_sep / self.layout.dbu
+
+    # create the shape
+    self.cell.shapes(self.l_layer).insert(pya.Box(0, 0, w_dbu, h_dbu))
+    self.cell.shapes(self.l_layer).insert(pya.Box(w_dbu + h_gap_dbu, -y_sep_dbu, 2*w_dbu + h_gap_dbu, h_dbu - y_sep_dbu))</text>
+</klayout-macro>
